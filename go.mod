@@ -1,4 +1,4 @@
-module github.com/ferdiebergado/go-fullstack-boilerplate
+module github.com/ferdiebergado/lovemyride
 
 go 1.22.7
 
