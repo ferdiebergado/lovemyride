@@ -16,8 +16,8 @@ import (
 
 	router "github.com/ferdiebergado/go-express"
 	"github.com/ferdiebergado/go-express/middleware"
-	"github.com/ferdiebergado/go-fullstack-boilerplate/internal/app"
-	"github.com/ferdiebergado/go-fullstack-boilerplate/internal/pkg/logger"
+	"github.com/ferdiebergado/lovemyride/internal/app"
+	"github.com/ferdiebergado/lovemyride/internal/pkg/logger"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 

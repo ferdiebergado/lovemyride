@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	router "github.com/ferdiebergado/go-express"
-	"github.com/ferdiebergado/go-fullstack-boilerplate/internal/web/html"
+	"github.com/ferdiebergado/lovemyride/internal/web/html"
 )
 
 func AddRoutes(router *router.Router) *router.Router {

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/ferdiebergado/go-fullstack-boilerplate/internal/pkg/http/response"
+	"github.com/ferdiebergado/lovemyride/internal/pkg/http/response"
 )
 
 //go:embed templates/*
