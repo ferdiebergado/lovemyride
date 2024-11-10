@@ -6,9 +6,9 @@ import (
 )
 
 type Model struct {
-	ID        int64           `json:"id,omitempty"`
+	ID        string          `json:"id"`
 	Metadata  json.RawMessage `json:"metadata,omitempty"`
-	CreatedAt time.Time       `json:"created_at,omitempty"`
-	UpdatedAt time.Time       `json:"updated_at,omitempty"`
+	CreatedAt time.Time       `json:"created_at"`
+	UpdatedAt time.Time       `json:"updated_at"`
 	DeletedAt *time.Time      `json:"deleted_at,omitempty"`
 }
