@@ -18,7 +18,7 @@ run:
 	go run ./...
 
 dev:
-	air
+	docker-compose up --build
 
 db:
 	$(CONTAINER) run -d --rm --network host --name $(DB_CONTAINER) -e POSTGRES_PASSWORD="$(DB_PASS)" \

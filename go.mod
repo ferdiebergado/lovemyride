@@ -1,6 +1,6 @@
 module github.com/ferdiebergado/lovemyride
 
-go 1.22.7
+go 1.23
 
 require (
 	github.com/ferdiebergado/go-express v0.2.0
