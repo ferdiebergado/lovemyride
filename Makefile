@@ -1,15 +1,12 @@
+# Load environment variables from .env
+include .env
+export $(shell sed 's/=.*//' .env)
+
 DB_CONTAINER := lovemyride-db
 DB_IMAGE := postgres:17.0-alpine3.20
 PROXY_CONTAINER := lovemyride-proxy
 PROXY_IMAGE := nginx:1.27.2-alpine3.20
 MIGRATIONS_DIR := ./internal/pkg/db/migrations
-
-# Load environment variables from .env
-include .env
-export $(shell sed 's/=.*//' .env)
-
-# Override DATABASE_URL for local migrate
-DATABASE_URL := postgres://$(DB_USER):$(DB_PASS)@localhost:5432/postgres?sslmode=disable
 
 all: db proxy dev
 
