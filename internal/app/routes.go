@@ -9,7 +9,7 @@ import (
 
 func AddRoutes(router *router.Router) *router.Router {
 	// Add routes here, see https://github.com/ferdiebergado/go-express for the documentation.
-	router.Get("/{$}", func(w http.ResponseWriter, _ *http.Request) {
+	router.Get("/home", func(w http.ResponseWriter, _ *http.Request) {
 		html.Render(w, nil, "pages/home.html")
 	})
 
