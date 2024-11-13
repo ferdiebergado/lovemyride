@@ -3,25 +3,27 @@ package db
 import (
 	"context"
 	"database/sql"
+
+	"github.com/ferdiebergado/lovemyride/internal/pkg/logger"
 )
 
-type DBTX interface {
-	ExecContext(context.Context, string, ...interface{}) (sql.Result, error)
-	PrepareContext(context.Context, string) (*sql.Stmt, error)
-	QueryContext(context.Context, string, ...interface{}) (*sql.Rows, error)
-	QueryRowContext(context.Context, string, ...interface{}) *sql.Row
-}
+const (
+	dbDriver           = "pgx"
+	connMaxLifeTime    = 0
+	maxIdleConnections = 50
+	maxOpenConnections = 50
+)
 
-func New(db DBTX) *Queries {
-	return &Queries{db: db}
-}
+func Connect(_ context.Context, dsn string) *sql.DB {
+	db, err := sql.Open(dbDriver, dsn)
 
-type Queries struct {
-	db DBTX
-}
-
-func (q *Queries) WithTx(tx *sql.Tx) *Queries {
-	return &Queries{
-		db: tx,
+	if err != nil {
+		logger.Fatal("Unable to connect to database", err)
 	}
+
+	db.SetConnMaxLifetime(connMaxLifeTime)
+	db.SetMaxIdleConns(maxIdleConnections)
+	db.SetMaxOpenConns(maxOpenConnections)
+
+	return db
 }
