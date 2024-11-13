@@ -19,7 +19,7 @@ run:
 	go run ./...
 
 dev:
-	docker-compose up --build
+	$(COMPOSE) up --build
 
 db:
 	$(CONTAINER) run -d --rm --network host --name $(DB_CONTAINER) -e POSTGRES_PASSWORD="$(DB_PASS)" \
