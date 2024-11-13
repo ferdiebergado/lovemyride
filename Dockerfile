@@ -10,7 +10,7 @@ FROM base AS development
 WORKDIR /app
 
 # Install the air CLI for auto-reloading
-RUN go install github.com/air-verse/air@latest
+RUN go install github.com/air-verse/air@v1.52.2
 
 # Copy the go.mod and go.sum files to the /app directory
 COPY go.mod go.sum ./
