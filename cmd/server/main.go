@@ -7,18 +7,10 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
-	"strconv"
 
 	"github.com/ferdiebergado/lovemyride/internal/app"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/db"
 	_ "github.com/jackc/pgx/v5/stdlib"
-)
-
-const (
-	serverShutdownTimeout = 10
-	serverReadTimeout     = 10
-	serverWriteTimeout    = 10
-	serverIdleTimeout     = 60
 )
 
 func setupLogger() {
@@ -51,15 +43,6 @@ func run(ctx context.Context, _ []string, getenv func(string) string, _ io.Reade
 	waitForShutdown(ctx, httpServer, stderr)
 
 	return nil
-}
-
-// Helper to parse timeout values with a default
-func parseTimeout(value string, defaultValue int) int {
-	timeout, err := strconv.Atoi(value)
-	if err != nil {
-		return defaultValue
-	}
-	return timeout
 }
 
 func main() {

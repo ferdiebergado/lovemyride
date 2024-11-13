@@ -10,13 +10,21 @@ import (
 	"time"
 
 	router "github.com/ferdiebergado/go-express"
+	"github.com/ferdiebergado/lovemyride/internal/pkg/parsers"
+)
+
+const (
+	serverShutdownTimeout = 10
+	serverReadTimeout     = 10
+	serverWriteTimeout    = 10
+	serverIdleTimeout     = 60
 )
 
 func createServer(getenv func(string) string, router *router.Router) *http.Server {
 	// Parse server timeouts
-	readTimeout := parseTimeout(getenv("SERVER_READ_TIMEOUT"), serverReadTimeout)
-	writeTimeout := parseTimeout(getenv("SERVER_WRITE_TIMEOUT"), serverWriteTimeout)
-	idleTimeout := parseTimeout(getenv("SERVER_IDLE_TIMEOUT"), serverIdleTimeout)
+	readTimeout := parsers.ParseTimeout(getenv("SERVER_READ_TIMEOUT"), serverReadTimeout)
+	writeTimeout := parsers.ParseTimeout(getenv("SERVER_WRITE_TIMEOUT"), serverWriteTimeout)
+	idleTimeout := parsers.ParseTimeout(getenv("SERVER_IDLE_TIMEOUT"), serverIdleTimeout)
 
 	// Configure HTTP server
 	return &http.Server{
