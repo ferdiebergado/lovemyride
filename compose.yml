@@ -16,7 +16,7 @@ services:
     networks:
       - lovemyride-network
     volumes:
-      - .:/app
+      - .:/app:Z
 
   # PostgreSQL Database Service
   db:
@@ -24,7 +24,9 @@ services:
     container_name: lovemyride-db
     shm_size: 128mb
     environment:
+      POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
     env_file:
       - ./.env
     healthcheck:
