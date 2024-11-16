@@ -7,6 +7,7 @@ DB_IMAGE := postgres:17.0-alpine3.20
 PROXY_CONTAINER := lovemyride-proxy
 PROXY_IMAGE := nginx:1.27.2-alpine3.20
 MIGRATIONS_DIR := ./internal/pkg/db/migrations
+MIGRATIONS_URL := postgres://$(DB_USER):$(DB_PASS)@localhost:$(DB_PORT)/$(DB_NAME)?sslmode=disable
 
 all: db proxy dev
 
@@ -40,16 +41,16 @@ migration:
 	migrate create -ext sql -dir $(MIGRATIONS_DIR) -seq $(name)
 
 migrate:
-	migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) up $(version)
+	migrate -database $(MIGRATIONS_URL) -path $(MIGRATIONS_DIR) up $(version)
 
 rollback:
-	migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) down $(version)
+	migrate -database $(MIGRATIONS_URL) -path $(MIGRATIONS_DIR) down $(version)
 
 drop:
-	migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) drop
+	migrate -database $(MIGRATIONS_URL) -path $(MIGRATIONS_DIR) drop
 
 force:
-	migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) force $(version)
+	migrate -database $(MIGRATIONS_URL) -path $(MIGRATIONS_DIR) force $(version)
 
 test:
 	go test -race ./...
@@ -60,4 +61,4 @@ css-watch:
 js-watch:
 	esbuild ./web/app/js/**/*.js --bundle --outdir=./web/static/js --sourcemap --target=es6 --splitting --format=esm --watch
 
-.PHONY: install dev db psql proxy migrate rollback drop test
+.PHONY: install run dev db psql proxy migrate rollback drop force test
