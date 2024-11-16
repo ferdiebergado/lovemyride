@@ -11,7 +11,7 @@ MIGRATIONS_DIR := ./internal/pkg/db/migrations
 all: db proxy dev
 
 install:
-	which migrate || go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+	which migrate || go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.17.1
 	which air || go install github.com/air-verse/air@v1.52.2
 	which esbuild || curl -fsSL https://esbuild.github.io/dl/latest | sh
 
