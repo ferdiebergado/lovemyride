@@ -14,16 +14,9 @@ import (
 
 	router "github.com/ferdiebergado/go-express"
 	"github.com/ferdiebergado/lovemyride/internal/app"
+	"github.com/ferdiebergado/lovemyride/internal/pkg/config"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/db"
-	"github.com/ferdiebergado/lovemyride/internal/pkg/parsers"
 	_ "github.com/jackc/pgx/v5/stdlib"
-)
-
-const (
-	serverShutdownTimeout = 10
-	serverReadTimeout     = 10
-	serverWriteTimeout    = 10
-	serverIdleTimeout     = 60
 )
 
 func setupLogger() {
@@ -31,19 +24,14 @@ func setupLogger() {
 	slog.SetDefault(logger)
 }
 
-func createServer(getenv func(string) string, router *router.Router) *http.Server {
-	// Parse server timeouts
-	readTimeout := parsers.ParseInt(getenv("SERVER_READ_TIMEOUT"), serverReadTimeout)
-	writeTimeout := parsers.ParseInt(getenv("SERVER_WRITE_TIMEOUT"), serverWriteTimeout)
-	idleTimeout := parsers.ParseInt(getenv("SERVER_IDLE_TIMEOUT"), serverIdleTimeout)
-
+func createServer(config *config.ServerOptions, router *router.Router) *http.Server {
 	// Configure HTTP server
 	return &http.Server{
-		Addr:         ":" + getenv("PORT"),
+		Addr:         ":" + config.Port,
 		Handler:      router,
-		ReadTimeout:  time.Duration(readTimeout * int(time.Second)),
-		WriteTimeout: time.Duration(writeTimeout * int(time.Second)),
-		IdleTimeout:  time.Duration(idleTimeout * int(time.Second)),
+		ReadTimeout:  time.Duration(config.ReadTimeout) * time.Second,
+		WriteTimeout: time.Duration(config.WriteTimeout) * time.Second,
+		IdleTimeout:  time.Duration(config.IdleTimeout) * time.Second,
 	}
 }
 
@@ -56,13 +44,13 @@ func startServer(httpServer *http.Server, stderr io.Writer) {
 }
 
 // Wait for context cancellation and gracefully shut down the server
-func waitForShutdown(ctx context.Context, httpServer *http.Server, stderr io.Writer) {
+func waitForShutdown(ctx context.Context, httpServer *http.Server, config *config.ServerOptions, stderr io.Writer) {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		<-ctx.Done()
-		shutdownCtx, cancel := context.WithTimeout(context.Background(), serverShutdownTimeout*time.Second)
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), time.Duration(config.ShutdownTimeout)*time.Second)
 		defer cancel()
 		if err := httpServer.Shutdown(shutdownCtx); err != nil {
 			fmt.Fprintf(stderr, "error shutting down http server: %s\n", err)
@@ -71,7 +59,7 @@ func waitForShutdown(ctx context.Context, httpServer *http.Server, stderr io.Wri
 	wg.Wait()
 }
 
-func run(ctx context.Context, _ []string, getenv func(string) string, _ io.Reader, _, stderr io.Writer) error {
+func run(ctx context.Context, _ []string, config *config.Config, _ io.Reader, _, stderr io.Writer) error {
 	// Handle OS interrupt signals
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
@@ -80,28 +68,29 @@ func run(ctx context.Context, _ []string, getenv func(string) string, _ io.Reade
 	setupLogger()
 
 	// Connect to the database
-	conn := db.Connect(ctx, getenv)
+	conn := db.Connect(ctx, config.DB)
 	defer conn.Close()
 
 	// Initialize router and add middlewares
 	router := app.SetupRouter(conn)
 
 	// Create the server
-	httpServer := createServer(getenv, router)
+	httpServer := createServer(config.Server, router)
 
 	// Start the server in a goroutine
 	go startServer(httpServer, stderr)
 
 	// Wait for shutdown
-	waitForShutdown(ctx, httpServer, stderr)
+	waitForShutdown(ctx, httpServer, config.Server, stderr)
 
 	return nil
 }
 
 func main() {
 	ctx := context.Background()
+	config := config.NewAppConfig()
 
-	if err := run(ctx, os.Args, os.Getenv, os.Stdin, os.Stdout, os.Stderr); err != nil {
+	if err := run(ctx, os.Args, config, os.Stdin, os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}

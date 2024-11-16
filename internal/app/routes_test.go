@@ -4,16 +4,18 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
 	router "github.com/ferdiebergado/go-express"
+	"github.com/ferdiebergado/lovemyride/internal/pkg/config"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/db"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-var conn = db.Connect(context.Background(), os.Getenv)
+var appConfig = config.NewAppConfig()
+
+var conn = db.Connect(context.Background(), appConfig.DB)
 
 func TestAddRoutes(t *testing.T) {
 	r := router.NewRouter() // Create a new instance of your custom Router
