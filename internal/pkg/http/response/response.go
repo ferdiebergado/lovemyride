@@ -7,7 +7,20 @@ import (
 	"net/http"
 )
 
-func JSON[T any](w http.ResponseWriter, _ *http.Request, status int, v T) error {
+type ValidationError struct {
+	Field string
+	Error string
+}
+
+type APIResponse struct {
+	Success bool              `json:"success"`
+	Message string            `json:"message,omitempty"`
+	Errors  []ValidationError `json:"errors,omitempty"`
+	Data    any               `json:"data,omitempty"`
+	Meta    map[string]any    `json:"meta,omitempty"`
+}
+
+func JSON[T any](w http.ResponseWriter, status int, v T) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(v); err != nil {
@@ -17,8 +30,20 @@ func JSON[T any](w http.ResponseWriter, _ *http.Request, status int, v T) error 
 }
 
 func ServerError(w http.ResponseWriter, msg string, err error) {
-	const errorText = "An error occurred."
+	// const errorText = "An error occurred."
 
 	slog.Error(msg, "Error:", err)
-	http.Error(w, errorText, http.StatusInternalServerError)
+
+	res := &APIResponse{
+		Success: false,
+		Message: msg,
+	}
+
+	err = JSON(w, http.StatusInternalServerError, res)
+
+	if err != nil {
+		slog.Error(msg, "Error:", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
 }

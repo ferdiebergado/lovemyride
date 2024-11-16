@@ -9,6 +9,7 @@ import (
 
 	router "github.com/ferdiebergado/go-express"
 	"github.com/ferdiebergado/go-express/middleware"
+	"github.com/ferdiebergado/lovemyride/internal/app/spareparts"
 	"github.com/ferdiebergado/lovemyride/internal/web/html"
 )
 
@@ -20,6 +21,8 @@ func SetupRouter(db *sql.DB) *router.Router {
 	r.Use(middleware.PanicRecovery)
 
 	AddRoutes(r, db)
+
+	spareparts.AddRoutes(r, db)
 
 	return r
 }
