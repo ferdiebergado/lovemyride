@@ -9,7 +9,7 @@
 -- Always show query time
 \timing
 -- Set Null char output to differentiate it from empty string
-\pset null '👻'
+\pset null '👽'
 -- Number of commands to save in history
 \set HISTSIZE 2000
 -- output any SQL run by psql slash commands
