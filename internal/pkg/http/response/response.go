@@ -30,20 +30,19 @@ func JSON[T any](w http.ResponseWriter, status int, v T) error {
 }
 
 func ServerError(w http.ResponseWriter, msg string, err error) {
-	// const errorText = "An error occurred."
+	const errorText = "An error occurred."
 
 	slog.Error(msg, "Error:", err)
 
 	res := &APIResponse{
 		Success: false,
-		Message: msg,
+		Message: errorText,
 	}
 
 	err = JSON(w, http.StatusInternalServerError, res)
 
 	if err != nil {
 		slog.Error(msg, "Error:", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, errorText, http.StatusInternalServerError)
 	}
-
 }
