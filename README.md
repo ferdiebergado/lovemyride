@@ -1,6 +1,6 @@
-# go-fullstack-boilerplate
+# lovemyride
 
-A template to scaffold a fullstack golang web application.
+Manage vehicle maintenance on the web.
 
 ## Features
 
@@ -26,32 +26,26 @@ A template to scaffold a fullstack golang web application.
 make install
 ```
 
-2. Rename .env.example to .env.
+2. Rename .env.example to .env.development.
 
 ```sh
-mv .env.example .env
+mv .env.example .env.development
 ```
 
-3. Change the database password (DB_PASS).
+3. Change the database credentials (DB_PASS).
 
 ```.env
 # .env
 DB_PASS=CHANGE_ME
 ```
 
-4. Start the database.
-
-```sh
-make db
-```
-
-5. Run the server in development mode.
+4. Start the container.
 
 ```sh
 make dev
 ```
 
-6. Open the web application at [localhost:8888](http://locahost:8888).
+5. Open the web server at [localhost:8080](http://locahost:8080).
 
 ## Migrations
 
