@@ -56,7 +56,7 @@ force:
 
 test:
 	migrate -database $(TEST_DATABASE_URL) -path $(MIGRATIONS_DIR) up
-	go test -race ./...
+	DATABASE_URL=$(TEST_DATABASE_URL) go test -race ./...
 
 css-watch:
 	esbuild ./web/app/css/styles.css --bundle --outdir=./web/static/css --watch
