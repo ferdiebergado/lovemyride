@@ -8,8 +8,9 @@ DB_IMAGE := postgres:17.0-alpine3.20
 PROXY_CONTAINER := lovemyride-proxy
 PROXY_IMAGE := nginx:1.27.2-alpine3.20
 MIGRATIONS_DIR := ./internal/pkg/db/migrations
-MIGRATIONS_URL := postgres://$(DB_USER):$(DB_PASS)@localhost:$(DB_PORT)/$(DB_NAME)?sslmode=disable
-TEST_DATABASE_URL := postgres://$(DB_USER):$(DB_PASS)@localhost:$(DB_PORT)/lovemyride_test?sslmode=disable
+BASE_DSN := postgres://$(DB_USER):$(DB_PASS)@localhost:$(DB_PORT)
+DATABASE_URL := $(BASE_DSN)/$(DB_NAME)?sslmode=disable
+TEST_DATABASE_URL := $(BASE_DSN)/lovemyride_test?sslmode=disable
 
 all: db proxy dev
 
@@ -43,20 +44,20 @@ migration:
 	migrate create -ext sql -dir $(MIGRATIONS_DIR) -seq $(name)
 
 migrate:
-	migrate -database $(MIGRATIONS_URL) -path $(MIGRATIONS_DIR) up $(version)
+	migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) up $(version)
 
 rollback:
-	migrate -database $(MIGRATIONS_URL) -path $(MIGRATIONS_DIR) down $(version)
+	migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) down $(version)
 
 drop:
-	migrate -database $(MIGRATIONS_URL) -path $(MIGRATIONS_DIR) drop
+	migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) drop
 
 force:
-	migrate -database $(MIGRATIONS_URL) -path $(MIGRATIONS_DIR) force $(version)
+	migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) force $(version)
 
 test:
-	migrate -database $(TEST_DATABASE_URL) -path $(MIGRATIONS_DIR) up
-	DATABASE_URL=$(TEST_DATABASE_URL) go test -race ./...
+	@migrate -database $(TEST_DATABASE_URL) -path $(MIGRATIONS_DIR) up
+	go test -race ./...
 
 css-watch:
 	esbuild ./web/app/css/styles.css --bundle --outdir=./web/static/css --watch
