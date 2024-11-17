@@ -10,16 +10,27 @@ import (
 	router "github.com/ferdiebergado/go-express"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/config"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/db"
+	"github.com/ferdiebergado/lovemyride/internal/pkg/env"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-var appConfig = config.NewAppConfig()
-
-var conn = db.Connect(context.Background(), appConfig.DB)
-
 func TestAddRoutes(t *testing.T) {
-	r := router.NewRouter() // Create a new instance of your custom Router
-	AddRoutes(r, conn)      // Add your routes to the Router
+	err := env.LoadEnv("../../.env.testing")
+
+	if err != nil {
+		t.Logf("load env: %v", err)
+		t.FailNow()
+	}
+
+	appConfig := config.NewAppConfig()
+	conn := db.Connect(context.Background(), appConfig.DB)
+
+	defer conn.Close()
+
+	r := router.NewRouter()
+
+	handler := NewAppHandler(conn)
+	AddRoutes(r, *handler)
 
 	t.Run("GET / should return status 200 and render home.html", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/home", nil)
