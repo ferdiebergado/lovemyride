@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/ferdiebergado/lovemyride/internal/pkg/db"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/http/request"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/http/response"
 )
@@ -34,7 +35,7 @@ func (h *Handler) CreateSparePart(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := &response.APIResponse{
+	res := &response.APIResponse[SparePart]{
 		Success: true,
 		Data:    sparePart,
 	}
@@ -56,7 +57,7 @@ func (h *Handler) GetSparePart(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := &response.APIResponse{
+	res := &response.APIResponse[SparePart]{
 		Success: true,
 		Data:    spareParts,
 	}
@@ -76,7 +77,7 @@ func (h *Handler) GetAllSpareParts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := &response.APIResponse{
+	res := &response.APIResponse[[]SparePart]{
 		Success: true,
 		Data:    spareParts,
 	}
@@ -104,7 +105,7 @@ func (h *Handler) UpdateSparePart(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := &response.APIResponse{
+	res := &response.APIResponse[any]{
 		Success: true,
 	}
 
@@ -118,14 +119,14 @@ func (h *Handler) UpdateSparePart(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) DeleteSparePart(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 
-	err := h.service.Delete(r.Context(), id)
+	err := h.service.Delete(r.Context(), id, db.SoftDelete)
 
 	if err != nil {
 		response.ServerError(w, "delete sparepart", err)
 		return
 	}
 
-	res := &response.APIResponse{
+	res := &response.APIResponse[any]{
 		Success: true,
 	}
 

@@ -23,11 +23,11 @@ type sparePartsRepo struct {
 }
 
 type Repo interface {
-	Create(ctx context.Context, params CreateParams) (*SparePart, error)
-	Find(ctx context.Context, id string) (*SparePart, error)
+	Create(ctx context.Context, params CreateParams) (SparePart, error)
+	Find(ctx context.Context, id string) (SparePart, error)
 	GetAll(ctx context.Context) ([]SparePart, error)
 	Update(ctx context.Context, id string, params UpdateParams) error
-	Delete(ctx context.Context, id string) error
+	Delete(ctx context.Context, id string, mode db.DeleteMode) error
 }
 
 const (
@@ -38,25 +38,25 @@ func NewSparePartRepo(db *sql.DB) Repo {
 	return &sparePartsRepo{db: db}
 }
 
-func (r *sparePartsRepo) Create(ctx context.Context, params CreateParams) (*SparePart, error) {
+func (r *sparePartsRepo) Create(ctx context.Context, params CreateParams) (SparePart, error) {
 	const query = `
 	INSERT INTO spareparts (description, maintenance_interval)
 	VALUES ($1, $2)
-	RETURNING id, description, maintenance_interval, created_at, updated_at
+	RETURNING id, description, maintenance_interval, created_at, updated_at, deleted_at
 	`
 
 	row := r.db.QueryRowContext(ctx, query, params.Description, params.MaintenanceInterval)
 
 	var sparePart SparePart
 
-	err := row.Scan(&sparePart.ID, &sparePart.Description, &sparePart.MaintenanceInterval, &sparePart.CreatedAt, &sparePart.UpdatedAt)
+	err := row.Scan(&sparePart.ID, &sparePart.Description, &sparePart.MaintenanceInterval, &sparePart.CreatedAt, &sparePart.UpdatedAt, &sparePart.DeletedAt)
 
-	return &sparePart, err
+	return sparePart, err
 }
 
-func (r *sparePartsRepo) Find(ctx context.Context, id string) (*SparePart, error) {
+func (r *sparePartsRepo) Find(ctx context.Context, id string) (SparePart, error) {
 	const query = `
-	SELECT id, description, maintenance_interval, created_at, updated_at
+	SELECT id, description, maintenance_interval, created_at, updated_at, deleted_at
 	FROM spareparts
 	WHERE id = $1
 	`
@@ -64,9 +64,9 @@ func (r *sparePartsRepo) Find(ctx context.Context, id string) (*SparePart, error
 
 	var sparePart SparePart
 
-	err := row.Scan(&sparePart.ID, &sparePart.Description, &sparePart.MaintenanceInterval, &sparePart.CreatedAt, &sparePart.UpdatedAt)
+	err := row.Scan(&sparePart.ID, &sparePart.Description, &sparePart.MaintenanceInterval, &sparePart.CreatedAt, &sparePart.UpdatedAt, &sparePart.DeletedAt)
 
-	return &sparePart, err
+	return sparePart, err
 }
 
 func (r *sparePartsRepo) GetAll(ctx context.Context) ([]SparePart, error) {
@@ -127,12 +127,23 @@ func (r *sparePartsRepo) Update(ctx context.Context, id string, params UpdatePar
 	return err
 }
 
-func (r *sparePartsRepo) Delete(ctx context.Context, id string) error {
-	const query = `
+func (r *sparePartsRepo) Delete(ctx context.Context, id string, mode db.DeleteMode) error {
+	var query string
+
+	switch mode {
+	case db.SoftDelete:
+		query = `
 	UPDATE spareparts
 	SET deleted_at = NOW()
 	WHERE id = $1
 	`
+	case db.HardDelete:
+		query = `
+	DELETE FROM spareparts
+	WHERE id = $1
+	`
+	}
+
 	_, err := r.db.ExecContext(ctx, query, id)
 
 	return err
