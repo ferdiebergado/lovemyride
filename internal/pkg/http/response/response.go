@@ -12,11 +12,11 @@ type ValidationError struct {
 	Error string
 }
 
-type APIResponse struct {
+type APIResponse[T any] struct {
 	Success bool              `json:"success"`
 	Message string            `json:"message,omitempty"`
 	Errors  []ValidationError `json:"errors,omitempty"`
-	Data    any               `json:"data,omitempty"`
+	Data    T                 `json:"data,omitempty"`
 	Meta    map[string]any    `json:"meta,omitempty"`
 }
 
@@ -34,7 +34,7 @@ func ServerError(w http.ResponseWriter, msg string, err error) {
 
 	slog.Error(msg, "Error:", err)
 
-	res := &APIResponse{
+	res := &APIResponse[any]{
 		Success: false,
 		Message: errorText,
 	}
