@@ -54,7 +54,7 @@ func tearDown() {
 	}
 }
 
-func TestAddRoutes(t *testing.T) {
+func TestSpareParts(t *testing.T) {
 	setup()
 
 	t.Run("POST /spareparts should return status 201 and return json data of the created sparepart", func(t *testing.T) {

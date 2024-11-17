@@ -14,7 +14,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-func TestAddRoutes(t *testing.T) {
+func TestApp(t *testing.T) {
 	err := env.LoadEnv("../../.env.testing")
 
 	if err != nil {
