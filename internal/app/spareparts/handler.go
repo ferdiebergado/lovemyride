@@ -46,7 +46,7 @@ func (h *Handler) CreateSparePart(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) GetSpareParts(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetSparePart(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 
 	spareParts, err := h.service.Find(r.Context(), id)
