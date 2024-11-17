@@ -12,9 +12,9 @@ func AddRoutes(router *router.Router, db *sql.DB) *router.Router {
 	handler := NewSparePartsHandler(service)
 
 	router.Post("/spareparts", handler.CreateSparePart)
-	router.Get("/spareparts/{id}", handler.GetSpareParts)
+	router.Get("/spareparts/{id}", handler.GetSparePart)
 	router.Get("/spareparts", handler.GetAllSpareParts)
-	router.Put("/spareparts/{id}", handler.UpdateSparePart)
+	router.Patch("/spareparts/{id}", handler.UpdateSparePart)
 	router.Delete("/spareparts/{id}", handler.DeleteSparePart)
 
 	return router

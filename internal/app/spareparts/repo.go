@@ -117,7 +117,9 @@ func (r *sparePartsRepo) GetAll(ctx context.Context) ([]SparePart, error) {
 func (r *sparePartsRepo) Update(ctx context.Context, id string, params UpdateParams) error {
 	const query = `
 	UPDATE spareparts
-	SET description = $1, maintenance_interval = $2
+	SET
+		description = COALESCE(NULLIF($1, ''), description),
+		maintenance_interval = COALESCE(NULLIF($2, 0), maintenance_interval)
 	WHERE id = $3
 	`
 	_, err := r.db.ExecContext(ctx, query, params.Description, params.MaintenanceInterval, id)
@@ -125,7 +127,6 @@ func (r *sparePartsRepo) Update(ctx context.Context, id string, params UpdatePar
 	return err
 }
 
-// Delete implements Repo.
 func (r *sparePartsRepo) Delete(ctx context.Context, id string) error {
 	const query = `
 	UPDATE spareparts
