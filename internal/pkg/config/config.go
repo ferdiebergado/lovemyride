@@ -22,7 +22,6 @@ type ServerOptions struct {
 
 type DBOptions struct {
 	Driver             string
-	DSN                string
 	Host               string
 	Port               string
 	User               string
@@ -56,7 +55,6 @@ func NewAppConfig() *Config {
 		},
 		DB: &DBOptions{
 			Driver:             "pgx",
-			DSN:                env.Must("DATABASE_URL"),
 			Host:               env.Must("DB_HOST"),
 			Port:               env.Must("DB_PORT"),
 			User:               env.Must("DB_USER"),
