@@ -1,3 +1,5 @@
+@import "./table.css";
+
 *,
 *::before,
 *::after {
@@ -8,7 +10,6 @@
 
 html {
 	scroll-behavior: smooth;
-	font-size: 1rem;
 }
 
 body {
@@ -17,6 +18,7 @@ body {
 	margin: 0;
 	min-height: 100vh;
 	font-family: sans-serif;
+	font-size: 1rem;
 	background-color: whitesmoke;
 }
 
