@@ -1,4 +1,4 @@
-# Use Go 1.23 bookworm as base image
+# Use Go 1.22 bookworm as base image
 FROM golang:1.22-bookworm AS base
 
 # Development stage
@@ -20,6 +20,23 @@ RUN go mod download
 
 # Start air for live reloading
 CMD ["air"]
+
+# Testing stage
+# =============================================================================
+# Create a testing stage based on the "base" image
+FROM base AS testing
+
+# Change the working directory to /app
+WORKDIR /app
+
+# Copy the go.mod and go.sum files to the /app directory
+COPY go.mod go.sum ./
+
+# Install dependencies
+RUN go mod download
+
+# Start the test
+RUN go test -v -race ./...
 
 # Builder stage
 # =============================================================================

@@ -4,8 +4,8 @@ services:
       context: .
       target: ${GO_ENV}
     container_name: lovemyride-app
-    env_file:
-      - ./.env.development
+    environment:
+      - GO_ENV
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -24,7 +24,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}
     env_file:
-      - ./.env.development
+      - ./.env.${GO_ENV}
     healthcheck:
       test: [CMD-SHELL, "sh -c 'pg_isready -U ${DB_USER} -d ${DB_NAME}'"]
       interval: 10s
@@ -45,7 +45,7 @@ services:
     image: nginx:1.27.2-alpine3.20
     container_name: lovemyride-proxy
     env_file:
-      - ./.env.development
+      - ./.env.${GO_ENV}
     depends_on:
       app:
         condition: service_healthy
@@ -64,7 +64,7 @@ services:
     image: migrate/migrate:v4.17.1
     container_name: lovemyride-migrate
     env_file:
-      - ./.env.development
+      - ./.env.${GO_ENV}
     depends_on:
       db:
         condition: service_healthy

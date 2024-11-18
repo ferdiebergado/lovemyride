@@ -1,6 +1,14 @@
 # Load environment variables from .env
+# include .env.development
+# export $(shell sed 's/=.*//' .env.development)
+
+ifeq ($(GO_ENV), testing)
+include .env.testing
+export $(shell sed 's/=.*//' .env.testing)
+else
 include .env.development
 export $(shell sed 's/=.*//' .env.development)
+endif
 
 # Variables
 DB_CONTAINER := lovemyride-db
@@ -8,9 +16,9 @@ DB_IMAGE := postgres:17.0-alpine3.20
 PROXY_CONTAINER := lovemyride-proxy
 PROXY_IMAGE := nginx:1.27.2-alpine3.20
 MIGRATIONS_DIR := ./internal/pkg/db/migrations
-BASE_DSN := postgres://$(DB_USER):$(DB_PASS)@localhost:$(DB_PORT)
-DATABASE_URL := $(BASE_DSN)/$(DB_NAME)?sslmode=disable
-TEST_DATABASE_URL := $(BASE_DSN)/lovemyride_test?sslmode=disable
+BASE_DATABASE_URL := postgres://$(DB_USER):$(DB_PASS)@localhost:$(DB_PORT)
+DATABASE_URL := $(BASE_DATABASE_URL)/$(DB_NAME)?sslmode=disable
+TEST_DATABASE_URL := $(BASE_DATABASE_URL)/lovemyride_test?sslmode=disable
 
 all: db proxy dev
 
@@ -23,7 +31,7 @@ run:
 	go run ./...
 
 dev:
-	$(COMPOSE) up --build
+	GO_ENV=development $(COMPOSE) up --build
 
 db:
 	$(CONTAINER) run -d --rm --network host --name $(DB_CONTAINER) -e POSTGRES_PASSWORD="$(DB_PASS)" \
@@ -57,7 +65,8 @@ force:
 
 test:
 	@migrate -database $(TEST_DATABASE_URL) -path $(MIGRATIONS_DIR) up
-	go test -race ./...
+	GO_ENV=testing go test -v -race -cover ./...
+	@migrate -database $(TEST_DATABASE_URL) -path $(MIGRATIONS_DIR) drop -f
 
 css-watch:
 	esbuild ./web/app/css/styles.css --bundle --outdir=./web/static/css --watch
