@@ -47,7 +47,7 @@ func getSparePart(ctx context.Context, id string) (SparePart, error) {
 }
 
 func tearDown() {
-	_, err := conn.ExecContext(context.Background(), `DELETE FROM spareparts`)
+	_, err := conn.ExecContext(context.Background(), `TRUNCATE TABLE spareparts`)
 
 	if err != nil {
 		log.Fatalf("delete spareparts: %+v", err)
@@ -268,8 +268,6 @@ func TestSpareParts(t *testing.T) {
 		if err != nil {
 			t.Error("Unable to create spare part")
 		}
-
-		t.Logf("newsparepart: %+v", newSparePart)
 
 		ID := newSparePart.ID
 
