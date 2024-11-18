@@ -14,10 +14,16 @@
       <nav>
         <ul>
           <li><a href="/">Home</a></li>
+          <li><a href="/spareparts">Spareparts</a></li>
         </ul>
       </nav>
     </header>
-    <main role="main">{{block "content" . }}{{end}}</main>
+    <main role="main">
+      <div id="alert" class="alert" style="display: none">
+        <div id="alert-message" class="alert-message"></div>
+      </div>
+      {{block "content" . }}{{end}}
+    </main>
     <footer></footer>
   </body>
 </html>

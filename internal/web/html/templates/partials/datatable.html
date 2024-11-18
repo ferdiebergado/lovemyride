@@ -1,6 +1,27 @@
-{{ define "datatable"}}
-<table>
-  <thead></thead>
-  <tbody></tbody>
-</table>
+{{ block "scripts" .}}
+<script type="module" src="js/datatable.js"></script>
+{{ end }} {{ define "datatable"}}
+
+<div class="responsive-table">
+  <table
+    id="datatable"
+    {{
+    .Headers
+    |
+    attr
+    }}
+    {{
+    .URL
+    |
+    attr
+    }}
+    {{.Data
+    |
+    attr}}
+  >
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
 {{end}}

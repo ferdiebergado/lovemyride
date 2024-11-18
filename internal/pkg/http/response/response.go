@@ -8,8 +8,8 @@ import (
 )
 
 type ValidationError struct {
-	Field string
-	Error string
+	Field string `json:"field"`
+	Error string `json:"error"`
 }
 
 type APIResponse[T any] struct {
@@ -18,6 +18,17 @@ type APIResponse[T any] struct {
 	Errors  []ValidationError `json:"errors,omitempty"`
 	Data    T                 `json:"data,omitempty"`
 	Meta    map[string]any    `json:"meta,omitempty"`
+}
+
+type TableHeader struct {
+	Label string `json:"label"`
+	Field string `json:"field"`
+}
+
+type TableData struct {
+	URL     string `json:"url"`
+	Headers string `json:"headers"`
+	Data    string `json:"data,omitempty"`
 }
 
 func JSON[T any](w http.ResponseWriter, status int, v T) error {

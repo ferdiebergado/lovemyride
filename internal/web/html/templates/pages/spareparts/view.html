@@ -1,0 +1,45 @@
+{{ block "title" .}} Sparepart Details {{ end }} {{ block "styles" . }}
+<style>
+  .container {
+    display: flex; /* Sets up the flex container */
+  }
+
+  .column {
+    padding: 10px;
+  }
+
+  .left-column {
+    flex: 1; /* Takes up 1 unit of flex-grow space */
+  }
+
+  .right-column {
+    flex: 5; /* Takes up 2 units of flex-grow space */
+  }
+</style>
+{{ end }} {{ block "content" . }}
+<h1>Sparepart Details</h1>
+
+{{ if .Values }}
+<div class="container">
+  <div class="column left-column">ID:</div>
+  <div class="column right-column">{{.Values.ID }}</div>
+</div>
+<div class="container">
+  <div class="column left-column">Description:</div>
+  <div class="column right-column">{{.Values.Description }}</div>
+</div>
+<div class="container">
+  <div class="column left-column">Maintenance Interval:</div>
+  <div class="column right-column">{{.Values.MaintenanceInterval }}</div>
+</div>
+
+<div class="container">
+  <div class="column left-column">Date Created:</div>
+  <div class="column right-column">{{.Values.CreatedAt }}</div>
+</div>
+
+<div class="container">
+  <div class="column left-column">Last Updated:</div>
+  <div class="column right-column">{{.Values.UpdatedAt }}</div>
+</div>
+{{ end }} {{ end }}

@@ -1,0 +1,49 @@
+{{ block "scripts" . }}
+<script type="module" src="/js/spareparts/form.js"></script>
+{{ end }} {{ define "sparepartsForm" }}
+
+<form id="app-form" action="{{ .Action }}" method="POST">
+  <input type="hidden" name="_model" value="sparepart" />
+
+  {{ if .Method }}
+  <input type="hidden" name="_method" value="{{ .Method}}" />
+  {{ end }}
+
+  <label for="description">Description</label>
+  <input
+    type="text"
+    name="description"
+    id="description"
+    placeholder="Description"
+    {{
+    if
+    .Values
+    }}
+    value="{{ .Values.Description }}"
+    {{
+    end
+    }}
+    required
+    autofocus
+  />
+
+  <label for="interval">Maintenance Interval</label>
+  <input
+    type="text"
+    pattern="\d+"
+    name="maintenance_interval"
+    id="maintenance_interval"
+    {{
+    if
+    .Values
+    }}
+    value="{{ .Values.MaintenanceInterval }}"
+    {{
+    end
+    }}
+    required
+  />
+
+  <button type="submit">Submit</button>
+</form>
+{{end}}
