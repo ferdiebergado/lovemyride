@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/ferdiebergado/lovemyride/internal/pkg/config"
-	"github.com/ferdiebergado/lovemyride/internal/pkg/logger"
+	"github.com/ferdiebergado/lovemyride/internal/pkg/logging"
 )
 
 type DeleteMode int
@@ -29,7 +29,7 @@ func Connect(ctx context.Context, dbConfig *config.DBOptions) *sql.DB {
 	db, err := sql.Open(dbConfig.Driver, dsn)
 
 	if err != nil {
-		logger.Fatal("open database", err)
+		logging.Fatal("open database", err)
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
@@ -38,7 +38,7 @@ func Connect(ctx context.Context, dbConfig *config.DBOptions) *sql.DB {
 	err = db.PingContext(ctx)
 
 	if err != nil {
-		logger.Fatal("ping database", err)
+		logging.Fatal("ping database", err)
 	}
 
 	db.SetConnMaxLifetime(time.Duration(dbConfig.ConnMaxLifetime))

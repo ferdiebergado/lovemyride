@@ -17,7 +17,7 @@ import (
 	"github.com/ferdiebergado/lovemyride/internal/pkg/config"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/db"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/env"
-	"github.com/ferdiebergado/lovemyride/internal/pkg/logger"
+	"github.com/ferdiebergado/lovemyride/internal/pkg/logging"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -95,7 +95,7 @@ func main() {
 		err := env.LoadEnv(".env." + appEnv)
 
 		if err != nil {
-			logger.Fatal("Unable to load .env file", err)
+			logging.Fatal("Unable to load .env file", err)
 		}
 	}
 
