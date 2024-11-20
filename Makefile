@@ -52,16 +52,16 @@ migration:
 	migrate create -ext sql -dir $(MIGRATIONS_DIR) -seq $(name)
 
 migrate:
-	migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) up $(version)
+	@migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) up $(version)
 
 rollback:
-	migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) down $(version)
+	@migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) down $(version)
 
 drop:
-	migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) drop
+	@migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) drop
 
 force:
-	migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) force $(version)
+	@migrate -database $(DATABASE_URL) -path $(MIGRATIONS_DIR) force $(version)
 
 test:
 	@migrate -database $(TEST_DATABASE_URL) -path $(MIGRATIONS_DIR) up
