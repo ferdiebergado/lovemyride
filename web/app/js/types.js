@@ -24,3 +24,5 @@
  * @property {string} description
  * @property {number} maintenanceInterval
  */
+
+export {}
