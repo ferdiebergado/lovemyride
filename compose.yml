@@ -6,6 +6,11 @@ services:
     container_name: lovemyride-app
     environment:
       - GO_ENV
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://app:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
       migrate:
         condition: service_completed_successfully
