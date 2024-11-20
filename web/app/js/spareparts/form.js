@@ -20,37 +20,42 @@ const alertMessage = /** @type {HTMLElement} */ (
 const inputElements = /** @type {NodeListOf<HTMLInputElement>} */ (
   document.querySelectorAll('input, select, textarea')
 );
+const submitBtn = /** @type {HTMLButtonElement} */ (
+  form.querySelector('[type="submit"]')
+);
 
-inputElements.forEach((element) => {
-  element.dataset.originalValue = element.value;
-});
+let loading = false;
 
-form.addEventListener('submit', async function (e) {
+updateInputOriginalValues();
+
+form.removeEventListener('submit', handleFormSubmit);
+form.addEventListener('submit', handleFormSubmit);
+
+/**
+ * Handle the form submission.
+ *
+ * @param {SubmitEvent} e
+ * @returns
+ */
+async function handleFormSubmit(e) {
   e.preventDefault();
 
+  if (!form || !submitBtn || !alertMessage || !alert) return;
+
+  loading = true;
+
+  updateSubmitBtn();
+
   try {
-    let method = this.method;
-
-    if (methodInput) method = methodInput.value;
-
-    method = method.toLocaleUpperCase();
-
-    let payload;
+    const method = (methodInput.value || this.method).toLocaleUpperCase();
     const formData = new FormData(this);
 
+    let payload;
+
     if (method === 'PATCH') {
-      const changedData = {};
-
-      inputElements.forEach((element) => {
-        if (element.value && element.value !== element.dataset.originalValue) {
-          changedData[element.name] = element.value;
-          element.dataset.originalValue = element.value;
-        }
-      });
-
-      payload = buildJsonData(changedData, modelInput.value);
+      payload = buildChangedPayload();
     } else {
-      payload = buildJsonData(formData, modelInput.value);
+      payload = buildJsonData(formData, modelInput?.value);
     }
 
     if (!isObjectWithEntries(payload)) return;
@@ -61,7 +66,11 @@ form.addEventListener('submit', async function (e) {
       headers: { 'Content-Type': 'application/json' },
     });
 
-    /** @type {APIResponse} */
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    /** @type {import('../types').APIResponse} */
     const { success, message } = await res.json();
 
     if (!success) {
@@ -69,11 +78,59 @@ form.addEventListener('submit', async function (e) {
       throw new Error(message);
     }
 
-    if (method === 'POST') this.reset();
+    if (method === 'POST') {
+      this.reset();
+
+      updateInputOriginalValues();
+    }
 
     alertMessage.textContent = message;
     alert.style.display = 'block';
   } catch (error) {
     console.error('An error occured:', error);
+    showError(error.message);
+  } finally {
+    loading = false;
+    updateSubmitBtn();
   }
-});
+}
+
+function updateSubmitBtn() {
+  if (loading) {
+    submitBtn.textContent = '';
+    submitBtn.disabled = true;
+    return;
+  }
+
+  submitBtn.textContent = 'Submit';
+  submitBtn.disabled = false;
+}
+
+/**
+ * Display an alert containing an error message.
+ *
+ * @param {string} msg
+ */
+function showError(msg) {
+  alertMessage.textContent = msg;
+  alert.style.display = 'block';
+}
+
+function buildChangedPayload() {
+  const changedData = {};
+
+  inputElements.forEach((element) => {
+    if (element.value && element.value !== element.dataset.originalValue) {
+      changedData[element.name] = element.value;
+      element.dataset.originalValue = element.value;
+    }
+  });
+
+  return buildJsonData(changedData, modelInput?.value);
+}
+
+function updateInputOriginalValues() {
+  inputElements.forEach((element) => {
+    element.dataset.originalValue = element.value;
+  });
+}
