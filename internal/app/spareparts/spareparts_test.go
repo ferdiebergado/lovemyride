@@ -19,6 +19,8 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
+const api = "/api/spareparts"
+
 var conn *sql.DB
 var r *router.Router
 var repo Repo
@@ -69,7 +71,7 @@ func TestSpareParts(t *testing.T) {
 			t.Fatalf("Failed to marshal JSON: %v", err)
 		}
 
-		req := httptest.NewRequest(http.MethodPost, "/spareparts", bytes.NewBuffer(jsonBody))
+		req := httptest.NewRequest(http.MethodPost, api, bytes.NewBuffer(jsonBody))
 		rec := httptest.NewRecorder()
 
 		r.ServeHTTP(rec, req)
@@ -115,7 +117,7 @@ func TestSpareParts(t *testing.T) {
 
 		ID := newSparePart.ID
 
-		req := httptest.NewRequest(http.MethodGet, "/spareparts/"+ID, nil)
+		req := httptest.NewRequest(http.MethodGet, api+"/"+ID, nil)
 		rec := httptest.NewRecorder()
 
 		r.ServeHTTP(rec, req)
@@ -169,7 +171,7 @@ func TestSpareParts(t *testing.T) {
 			spareParts = append(spareParts, sparePart)
 		}
 
-		req := httptest.NewRequest(http.MethodGet, "/spareparts", nil)
+		req := httptest.NewRequest(http.MethodGet, api, nil)
 		rec := httptest.NewRecorder()
 
 		r.ServeHTTP(rec, req)
@@ -217,7 +219,7 @@ func TestSpareParts(t *testing.T) {
 			t.Fatalf("Failed to marshal JSON: %v", err)
 		}
 
-		req := httptest.NewRequest(http.MethodPatch, "/spareparts/"+ID, bytes.NewBuffer(jsonBody))
+		req := httptest.NewRequest(http.MethodPatch, api+"/"+ID, bytes.NewBuffer(jsonBody))
 		rec := httptest.NewRecorder()
 
 		r.ServeHTTP(rec, req)
@@ -271,7 +273,7 @@ func TestSpareParts(t *testing.T) {
 
 		ID := newSparePart.ID
 
-		req := httptest.NewRequest(http.MethodDelete, "/spareparts/"+ID, nil)
+		req := httptest.NewRequest(http.MethodDelete, api+"/"+ID, nil)
 		rec := httptest.NewRecorder()
 
 		r.ServeHTTP(rec, req)
