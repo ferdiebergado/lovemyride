@@ -10,11 +10,13 @@ import (
 	"github.com/ferdiebergado/lovemyride/internal/pkg/db"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/http/request"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/http/response"
+	"github.com/ferdiebergado/lovemyride/internal/pkg/logger"
 	"github.com/ferdiebergado/lovemyride/internal/web/html"
 )
 
 type Handler struct {
 	service Service
+	logger  *slog.Logger
 }
 
 const path = "/spareparts"
@@ -22,6 +24,7 @@ const path = "/spareparts"
 func NewSparePartsHandler(service Service) *Handler {
 	return &Handler{
 		service: service,
+		logger:  logger.CreateLogger(),
 	}
 }
 
@@ -36,7 +39,7 @@ func (h *Handler) CreateSparePart(w http.ResponseWriter, r *http.Request) {
 	sparePart, err := h.service.Create(r.Context(), params)
 
 	if err != nil {
-		slog.Error("create spare parts", "Error:", err)
+		h.logger.Error("create spare parts", "Error:", err)
 		http.Error(w, "create spare parts", http.StatusInternalServerError)
 		return
 	}

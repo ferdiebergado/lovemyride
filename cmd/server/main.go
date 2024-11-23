@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -20,11 +19,6 @@ import (
 	"github.com/ferdiebergado/lovemyride/internal/pkg/logging"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
-
-func setupLogger() {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	slog.SetDefault(logger)
-}
 
 func createServer(config *config.ServerOptions, router *router.Router) *http.Server {
 	// Configure HTTP server
@@ -65,9 +59,6 @@ func run(ctx context.Context, _ []string, config *config.Config, _ io.Reader, _,
 	// Handle OS interrupt signals
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
-
-	// Initialize logger
-	setupLogger()
 
 	// Connect to the database
 	conn := db.Connect(ctx, config.DB)
