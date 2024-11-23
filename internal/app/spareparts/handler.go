@@ -10,7 +10,7 @@ import (
 	"github.com/ferdiebergado/lovemyride/internal/pkg/db"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/http/request"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/http/response"
-	"github.com/ferdiebergado/lovemyride/internal/pkg/logger"
+	"github.com/ferdiebergado/lovemyride/internal/pkg/logging"
 	"github.com/ferdiebergado/lovemyride/internal/web/html"
 )
 
@@ -24,7 +24,7 @@ const path = "/spareparts"
 func NewSparePartsHandler(service Service) *Handler {
 	return &Handler{
 		service: service,
-		logger:  logger.CreateLogger(),
+		logger:  logging.CreateLogger(),
 	}
 }
 
