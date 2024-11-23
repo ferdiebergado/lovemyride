@@ -37,7 +37,7 @@ func setup() {
 	repo = NewSparePartRepo(conn)
 	r = router.NewRouter()
 
-	Mount(r, conn)
+	Mount(r, conn, appConfig)
 }
 
 func createSparePart(ctx context.Context, params CreateParams) (SparePart, error) {

@@ -7,8 +7,14 @@ import (
 )
 
 type Config struct {
+	App    *AppOptions
 	Server *ServerOptions
 	DB     *DBOptions
+}
+
+type AppOptions struct {
+	APIPrefix   string
+	IDPathValue string
 }
 
 type ServerOptions struct {
@@ -45,6 +51,10 @@ const (
 
 func NewAppConfig() *Config {
 	return &Config{
+		App: &AppOptions{
+			APIPrefix:   "/api",
+			IDPathValue: "{id}",
+		},
 		Server: &ServerOptions{
 			Host:            os.Getenv("HOST"),
 			Port:            env.GetEnv("PORT", "8000"),

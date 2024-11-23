@@ -65,7 +65,7 @@ func run(ctx context.Context, _ []string, config *config.Config, _ io.Reader, _,
 	defer conn.Close()
 
 	// Initialize router and add middlewares
-	router := app.SetupRouter(conn)
+	router := app.SetupRouter(conn, config)
 
 	// Create the server
 	httpServer := createServer(config.Server, router)
