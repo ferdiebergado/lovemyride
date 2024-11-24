@@ -72,6 +72,6 @@ css-watch:
 	esbuild ./web/app/css/styles.css --bundle --outdir=./web/static/css --watch
 
 js-watch:
-	esbuild ./web/app/js/**/*.js --bundle --outdir=./web/static/js --sourcemap --target=es6 --splitting --format=esm --watch
+	esbuild ./web/app/js/**/**/*.js --bundle --outdir=./web/static/js --sourcemap --target=es6 --splitting --format=esm --watch
 
 .PHONY: install run dev db psql proxy migrate rollback drop force test
