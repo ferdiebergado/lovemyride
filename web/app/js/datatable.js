@@ -8,6 +8,7 @@
  * @property {string} field
  */
 
+const apiPrefix = '/api';
 const datatable = /** @type {HTMLTableElement} */ (
   document.getElementById('datatable')
 );
@@ -58,11 +59,11 @@ function renderTableBody() {
       const td = document.createElement('td');
 
       const viewLink = document.createElement('a');
-      viewLink.href = `${endpoint.replace('/api', '')}/${row.id}`;
+      viewLink.href = `${endpoint?.replace(apiPrefix, '')}/${row.id}`;
       viewLink.textContent = 'Info';
 
       const editLink = document.createElement('a');
-      editLink.href = `${endpoint.replace('/api', '')}/${row.id}/edit`;
+      editLink.href = `${endpoint?.replace(apiPrefix, '')}/${row.id}/edit`;
       editLink.textContent = 'Edit';
 
       td.appendChild(viewLink);
