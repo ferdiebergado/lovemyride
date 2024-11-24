@@ -45,6 +45,7 @@ function renderTableHead() {
 // Render table with optimized DOM manipulation
 function renderTableBody() {
   const bodyFragment = document.createDocumentFragment();
+
   if (data.length > 0) {
     data.forEach((row) => {
       const tr = document.createElement('tr');
@@ -59,10 +60,12 @@ function renderTableBody() {
       const td = document.createElement('td');
 
       const viewLink = document.createElement('a');
+      viewLink.classList.add('btn', 'btn-primary');
       viewLink.href = `${endpoint?.replace(apiPrefix, '')}/${row.id}`;
       viewLink.textContent = 'Info';
 
       const editLink = document.createElement('a');
+      editLink.classList.add('btn', 'btn-secondary');
       editLink.href = `${endpoint?.replace(apiPrefix, '')}/${row.id}/edit`;
       editLink.textContent = 'Edit';
 
@@ -75,6 +78,7 @@ function renderTableBody() {
   } else {
     const noDataRow = document.createElement('tr');
     const noDataCell = document.createElement('td');
+
     noDataCell.colSpan = headers.length + 1;
     noDataCell.textContent = 'No data.';
     noDataRow.appendChild(noDataCell);
@@ -82,7 +86,7 @@ function renderTableBody() {
   }
 
   if (tableBody) {
-    tableBody.innerHTML = ''; // Clear existing content
+    tableBody.innerHTML = '';
     tableBody.appendChild(bodyFragment);
   }
 }

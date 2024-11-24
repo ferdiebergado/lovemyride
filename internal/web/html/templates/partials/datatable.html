@@ -2,26 +2,28 @@
 <script type="module" src="js/datatable.js"></script>
 {{ end }} {{ define "datatable"}}
 
-<div class="responsive-table">
-  <table
-    id="datatable"
-    {{
-    .Headers
-    |
-    attr
-    }}
-    {{
-    .URL
-    |
-    attr
-    }}
-    {{.Data
-    |
-    attr}}
-  >
-    <thead></thead>
-    <tbody></tbody>
-  </table>
+<div class="card">
+  <div class="responsive-table">
+    <table
+      id="datatable"
+      {{
+      .Headers
+      |
+      attr
+      }}
+      {{
+      .URL
+      |
+      attr
+      }}
+      {{.Data
+      |
+      attr}}
+    >
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+  </div>
 </div>
 
 {{end}}
