@@ -39,6 +39,8 @@ type DBOptions struct {
 }
 
 const (
+	prefix                = "/api"
+	id                    = "id"
 	serverShutdownTimeout = 10
 	serverReadTimeout     = 10
 	serverWriteTimeout    = 10
@@ -52,8 +54,8 @@ const (
 func NewAppConfig() *Config {
 	return &Config{
 		App: &AppOptions{
-			APIPrefix:   "/api",
-			IDPathValue: "{id}",
+			APIPrefix:   prefix,
+			IDPathValue: id,
 		},
 		Server: &ServerOptions{
 			Host:            os.Getenv("HOST"),

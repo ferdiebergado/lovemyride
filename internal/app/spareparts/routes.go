@@ -6,18 +6,22 @@ import (
 )
 
 func AddRoutes(router *router.Router, handler Handler, config *config.Config) {
-	path := "/spareparts"
-	pathID := path + "/" + config.App.IDPathValue
+	const path = "/spareparts"
+	idPath := "/{" + config.App.IDPathValue + "}"
+	pathWithID := path + idPath
 	resource := config.App.APIPrefix + path
-	resourceID := resource + "/" + config.App.IDPathValue
+	resourceWithID := resource + idPath
 
+	// API routes
 	router.Post(resource, handler.CreateSparePart)
-	router.Get(resourceID, handler.GetSparePart)
+	router.Get(resourceWithID, handler.GetSparePart)
 	router.Get(resource, handler.GetAllSpareParts)
-	router.Patch(resourceID, handler.UpdateSparePart)
-	router.Delete(resourceID, handler.DeleteSparePart)
+	router.Patch(resourceWithID, handler.UpdateSparePart)
+	router.Delete(resourceWithID, handler.DeleteSparePart)
+
+	// HTML routes
 	router.Get(path, handler.ListSpareParts)
 	router.Get(path+"/create", handler.ShowCreateForm)
-	router.Get(pathID, handler.ViewSparePart)
-	router.Get(pathID+"/edit", handler.EditSparePart)
+	router.Get(pathWithID, handler.ViewSparePart)
+	router.Get(pathWithID+"/edit", handler.EditSparePart)
 }
