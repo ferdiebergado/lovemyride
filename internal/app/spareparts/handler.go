@@ -158,10 +158,6 @@ func (h *Handler) ListSpareParts(w http.ResponseWriter, r *http.Request) {
 
 	headers := []response.TableHeader{
 		{
-			Label: "ID",
-			Field: "id",
-		},
-		{
 			Label: "Description",
 			Field: "description",
 		},
