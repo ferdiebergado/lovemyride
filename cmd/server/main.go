@@ -55,20 +55,26 @@ func waitForShutdown(ctx context.Context, httpServer *http.Server, config *confi
 	wg.Wait()
 }
 
-func run(ctx context.Context, _ []string, config *config.Config, _ io.Reader, _, stderr io.Writer) error {
+func run(ctx context.Context, _ []string, _ io.Reader, _, stderr io.Writer) error {
 	// Handle OS interrupt signals
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
+
+	// Initialize app config
+	config := config.NewAppConfig()
 
 	// Connect to the database
 	conn := db.Connect(ctx, config.DB)
 	defer conn.Close()
 
-	// Initialize router and add middlewares
-	router := app.SetupRouter(conn, config)
+	// Create a logger
+	logger := logging.CreateLogger()
+
+	// Setup a new app
+	app := app.NewApp(conn, config, logger)
 
 	// Create the server
-	httpServer := createServer(config.Server, router)
+	httpServer := createServer(config.Server, app.Router)
 
 	// Start the server in a goroutine
 	go startServer(httpServer, stderr)
@@ -90,10 +96,7 @@ func main() {
 		}
 	}
 
-	ctx := context.Background()
-	config := config.NewAppConfig()
-
-	if err := run(ctx, os.Args, config, os.Stdin, os.Stdout, os.Stderr); err != nil {
+	if err := run(context.Background(), os.Args, os.Stdin, os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}

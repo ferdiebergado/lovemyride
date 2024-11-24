@@ -7,10 +7,10 @@ import (
 	"strings"
 	"testing"
 
-	router "github.com/ferdiebergado/go-express"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/config"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/db"
 	"github.com/ferdiebergado/lovemyride/internal/pkg/env"
+	"github.com/ferdiebergado/lovemyride/internal/pkg/logging"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -23,14 +23,15 @@ func TestApp(t *testing.T) {
 	}
 
 	appConfig := config.NewAppConfig()
-	conn := db.Connect(context.Background(), appConfig.DB)
 
+	conn := db.Connect(context.Background(), appConfig.DB)
 	defer conn.Close()
 
-	r := router.NewRouter()
+	logger := logging.CreateLogger()
 
-	handler := NewAppHandler(conn)
-	AddRoutes(r, *handler)
+	app := NewApp(conn, appConfig, logger)
+
+	r := app.Router
 
 	t.Run("GET / should return status 200 and render home.html", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/home", nil)

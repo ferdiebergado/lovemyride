@@ -2,6 +2,7 @@ package app
 
 import (
 	"database/sql"
+	"log/slog"
 
 	router "github.com/ferdiebergado/go-express"
 	"github.com/ferdiebergado/go-express/middleware"
@@ -9,18 +10,38 @@ import (
 	"github.com/ferdiebergado/lovemyride/internal/pkg/config"
 )
 
+type App struct {
+	DB     *sql.DB
+	Config *config.Config
+	Logger *slog.Logger
+	Router *router.Router
+}
+
+func NewApp(db *sql.DB, config *config.Config, logger *slog.Logger) *App {
+	app := &App{
+		DB:     db,
+		Config: config,
+		Logger: logger,
+		Router: router.NewRouter(),
+	}
+
+	app.SetupRoutes()
+
+	return app
+}
+
 // Setup router with middlewares
-func SetupRouter(db *sql.DB, config *config.Config) *router.Router {
-	r := router.NewRouter()
+func (a *App) SetupRoutes() {
+	// Global middlewares
+	a.Router.Use(middleware.RequestLogger)
+	a.Router.Use(middleware.PanicRecovery)
 
-	r.Use(middleware.RequestLogger)
-	r.Use(middleware.PanicRecovery)
+	// Base routes
+	handler := NewAppHandler(a.DB)
+	a.Router.Get("/home", handler.RenderHome)
+	a.Router.Get("/health", handler.CheckHealth)
+	a.Router.NotFound(handler.HandleNotFound)
 
-	handler := NewAppHandler(db)
-
-	AddRoutes(r, *handler)
-
-	spareparts.Mount(r, db, config)
-
-	return r
+	// Spareparts routes
+	spareparts.Mount(a.Router, a.DB, a.Config)
 }
